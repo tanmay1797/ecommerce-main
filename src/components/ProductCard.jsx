@@ -3,10 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LoginPromptModal from "./LoginPromptModal";
 
-const ProductCard = ({ product, loggedInUser, setLoggedInUser }) => {
+const ProductCard = ({
+  product,
+  loggedInUser,
+  setLoggedInUser,
+  setShowLoginModal,
+}) => {
   const [quantity, setQuantity] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
@@ -29,7 +33,7 @@ const ProductCard = ({ product, loggedInUser, setLoggedInUser }) => {
 
   const handleAddToCart = async () => {
     if (!loggedInUser) {
-      setShowLoginModal(true);
+      setShowLoginModal(true); // ✅ trigger global modal
       return;
     }
 
@@ -48,6 +52,9 @@ const ProductCard = ({ product, loggedInUser, setLoggedInUser }) => {
         }
       );
       setQuantity(1);
+      const toastEl = document.getElementById("cartToast");
+      const toast = new window.bootstrap.Toast(toastEl);
+      toast.show();
     } catch (error) {
       console.error("Error adding to cart:", error);
     } finally {
@@ -64,15 +71,15 @@ const ProductCard = ({ product, loggedInUser, setLoggedInUser }) => {
           }`}
         >
           <img
-            src={product.imageUrl}
+            src={product?.imageUrl}
             className="card-img-top"
-            alt={product.name}
+            alt={product?.name}
             style={{ cursor: "pointer" }}
             onClick={() => navigate(`/product/${product._id}`)}
           />
           <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{product.name}</h5>
-            <p className="card-text">₹{product.price}</p>
+            <h5 className="card-title">{product?.name}</h5>
+            <p className="card-text">₹{product?.price}</p>
 
             {quantity === 0 ? (
               <button
@@ -93,12 +100,6 @@ const ProductCard = ({ product, loggedInUser, setLoggedInUser }) => {
           </div>
         </div>
       </div>
-
-      <LoginPromptModal
-        show={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={setLoggedInUser}
-      />
     </>
   );
 };

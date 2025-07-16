@@ -10,6 +10,7 @@ export default function ProductsPage({
   searchTerm,
   loggedInUser,
   setLoggedInUser,
+  setShowLoginModal,
 }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -134,6 +135,7 @@ export default function ProductsPage({
                     product={product}
                     loggedInUser={loggedInUser}
                     setLoggedInUser={setLoggedInUser}
+                    setShowLoginModal={setShowLoginModal}
                   />
                 ))}
               </div>

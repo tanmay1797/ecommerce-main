@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
+import LoginPromptModal from "./components/LoginPromptModal"; // ✅ Import modal
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -18,9 +19,9 @@ function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [cartProducts, setCartProducts] = useState([]);
-  const [loadingUser, setLoadingUser] = useState(true); // ✅ New state
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // ✅ Restore user from token on page refresh
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -32,10 +33,9 @@ function App() {
         localStorage.removeItem("token");
       }
     }
-    setLoadingUser(false); // ✅ Mark loading complete after token check
+    setLoadingUser(false);
   }, []);
 
-  // ✅ Don't render routes until user loading is complete
   if (loadingUser) {
     return <p className="text-center mt-5">Loading...</p>;
   }
@@ -46,6 +46,7 @@ function App() {
         loggedInUser={loggedInUser}
         setLoggedInUser={setLoggedInUser}
         setSearchTerm={setSearchTerm}
+        showLoginModal={showLoginModal}
       />
       <Routes>
         <Route
@@ -57,6 +58,7 @@ function App() {
               searchTerm={searchTerm}
               loggedInUser={loggedInUser}
               setLoggedInUser={setLoggedInUser}
+              setShowLoginModal={setShowLoginModal}
             />
           }
         />
@@ -92,6 +94,15 @@ function App() {
           element={<ProductDetail loggedInUser={loggedInUser} />}
         />
       </Routes>
+      {/* ✅ RENDER THE MODAL HERE */}
+      <LoginPromptModal
+        show={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={(user) => {
+          setLoggedInUser(user);
+          setShowLoginModal(false);
+        }}
+      />
     </Router>
   );
 }

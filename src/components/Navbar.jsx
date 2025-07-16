@@ -12,7 +12,6 @@ export default function Navbar({
   const handleLogout = () => {
     localStorage.removeItem("token");
     setLoggedInUser(null);
-    // navigate("/login");
     window.location.href = "/login";
   };
 
@@ -21,14 +20,14 @@ export default function Navbar({
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
       <div className="container-fluid">
         <button
           className="navbar-brand btn btn-link mx-4 text-decoration-none text-white"
           onClick={() => {
             setTimeout(() => {
               navigate("/");
-            }, 500); // ✅ 500ms delay
+            }, 500);
           }}
         >
           MyShop
@@ -56,18 +55,19 @@ export default function Navbar({
             </form>
           )}
 
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav ms-auto align-items-center">
             {loggedInUser ? (
               <>
                 <li className="nav-item dropdown">
                   <button
-                    className="btn btn-dark dropdown-toggle text-primary"
+                    className="nav-link dropdown-toggle text-primary btn btn-link"
                     id="userDropdown"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                     type="button"
                   >
-                    Welcome, {loggedInUser.name}
+                    Welcome,{" "}
+                    <strong className="fs-5">{loggedInUser.name}</strong>
                   </button>
                   <ul
                     className="dropdown-menu dropdown-menu-end"
@@ -81,20 +81,27 @@ export default function Navbar({
                         My Profile
                       </button>
                     </li>
+                    <li>
+                      <button className="dropdown-item" onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </li>
                   </ul>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/" onClick={handleLogout}>
-                    Logout
-                  </Link>
                 </li>
               </>
             ) : (
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">
-                  Login
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">
+                    Login
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">
+                    Register
+                  </Link>
+                </li>
+              </>
             )}
 
             <li className="nav-item">

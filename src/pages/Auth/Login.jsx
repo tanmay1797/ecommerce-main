@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const Login = ({ setLoggedInUser }) => {
   const navigate = useNavigate();
@@ -43,9 +44,9 @@ const Login = ({ setLoggedInUser }) => {
       if (response.ok && data.success) {
         const decodedUser = jwtDecode(data.token);
         localStorage.setItem("token", data.token);
-        console.log(decodedUser, "decodedUser_inlogin_component");
         setLoggedInUser(decodedUser);
         // alert("Login successful!");
+        toast.success("Login successful!");
         navigate("/");
       } else {
         setError(data.message || "Login failed. Please try again.");

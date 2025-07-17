@@ -14,6 +14,10 @@ import CartPage from "./pages/Cart/CartPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ProductDetail from "./pages/products/ProductDetail";
 
+// toast
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [products, setProducts] = useState([]);
@@ -103,6 +107,7 @@ function App() {
           setShowLoginModal(false);
         }}
       />
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </Router>
   );
 }

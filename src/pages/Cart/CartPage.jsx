@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
@@ -47,14 +48,14 @@ export default function CartPage() {
         }
       );
       fetchCart();
+      toast.success("Item removed from cart");
     } catch (err) {
-      console.error("Error removing item:", err);
+      toast.error("Error removing item:", err);
     }
   };
 
   const handleChangeQuantity = async (item, delta) => {
     const newQty = item.quantity + delta;
-
     if (newQty < 1) {
       await handleRemoveItem(item.productId._id);
       return;
@@ -88,6 +89,9 @@ export default function CartPage() {
       );
 
       fetchCart();
+      toast.info(
+        `Quantity has been ${delta > 0 ? "increased" : "decreased"} by 1`
+      );
     } catch (err) {
       console.error("Error updating quantity:", err);
     } finally {

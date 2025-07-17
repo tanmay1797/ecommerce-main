@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const ProfilePage = ({ loggedInUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -55,20 +56,24 @@ const ProfilePage = ({ loggedInUser }) => {
       const data = await response.json();
 
       if (data.success) {
-        alert("OTP has been sent successfully.");
+        // alert("OTP has been sent successfully.");
+        toast.success("OTP has been sent successfully.");
         setFieldsEnabled(true);
       } else {
-        alert(data.message || "Failed to send OTP.");
+        // alert(data.message || "Failed to send OTP.");
+        toast.error(data.message || "Failed to send OTP.");
       }
     } catch (err) {
       console.error("OTP send error:", err);
-      alert("An error occurred while sending OTP.");
+      // alert("An error occurred while sending OTP.");
+      toast.error("An error occurred while sending OTP.");
     }
   };
 
   const handlePasswordReset = async () => {
     if (!receivedOtp.trim() || !newPassword.trim()) {
-      alert("Please enter OTP and new password.");
+      // alert("Please enter OTP and new password.");
+      toast.info("Please enter OTP and new password.");
       return;
     }
 
@@ -89,14 +94,17 @@ const ProfilePage = ({ loggedInUser }) => {
       const data = await response.json();
 
       if (data.success) {
-        alert("Password updated successfully.");
+        // alert("Password updated successfully.");
+        toast.success("Password updated successfully.");
         setShowModal(false);
       } else {
-        alert(data.message || "Failed to update password.");
+        // alert(data.message || "Failed to update password.");
+        toast.error(data.message || "Failed to update password.");
       }
     } catch (err) {
       console.error("Password reset error:", err);
-      alert("An error occurred while updating password.");
+      // alert("An error occurred while updating password.");
+      toast.error("An error occurred while updating password.");
     }
   };
 

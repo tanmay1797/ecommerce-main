@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Navbar({
   loggedInUser,
@@ -12,7 +13,8 @@ export default function Navbar({
   const handleLogout = () => {
     localStorage.removeItem("token");
     setLoggedInUser(null);
-    window.location.href = "/login";
+    navigate("/login");
+    toast.success("Logged out. See you again soon!");
   };
 
   const handleSearchChange = (e) => {
@@ -109,7 +111,7 @@ export default function Navbar({
                 className="nav-link btn btn-link text-decoration-none"
                 onClick={() => {
                   if (!loggedInUser) {
-                    alert("You're not logged in!");
+                    toast.error("You're not logged in!");
                   } else {
                     navigate("/cart");
                   }

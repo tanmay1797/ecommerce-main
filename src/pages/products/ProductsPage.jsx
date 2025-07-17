@@ -100,7 +100,14 @@ export default function ProductsPage({
         <div className="row">
           {/* Sidebar - Category Filter */}
           <div className="col-md-2 mb-4">
-            <div className="card h-100">
+            <div
+              className="card sticky-top"
+              style={{
+                top: "70px", // adjust based on your Navbar height
+                height: "calc(100vh - 70px)",
+                overflowY: "auto",
+              }}
+            >
               <div className="card-header fw-bold">Filter by Category</div>
               <ul className="list-group list-group-flush">
                 {categories.map((cat) => (
@@ -144,7 +151,7 @@ export default function ProductsPage({
             )}
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {filteredProducts.length > 0 && totalPages > 1 && (
               <nav className="mt-4 d-flex justify-content-center">
                 <ul className="pagination">
                   <li

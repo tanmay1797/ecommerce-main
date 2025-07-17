@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ProductDetail = ({ loggedInUser }) => {
   const { productId } = useParams();
@@ -55,7 +56,8 @@ const ProductDetail = ({ loggedInUser }) => {
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login first.");
+      // alert("Please login first.");
+      toast.error("Please login first.");
       return;
     }
 
@@ -72,6 +74,7 @@ const ProductDetail = ({ loggedInUser }) => {
         }
       );
       setQuantity(1);
+      toast.success("Item added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error);
     } finally {

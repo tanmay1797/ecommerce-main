@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LoginPromptModal from "./LoginPromptModal";
+import { toast } from "react-toastify";
 
 const ProductCard = ({
   product,
@@ -52,11 +53,10 @@ const ProductCard = ({
         }
       );
       setQuantity(1);
-      const toastEl = document.getElementById("cartToast");
-      const toast = new window.bootstrap.Toast(toastEl);
-      toast.show();
+      toast.success("Item added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart.");
     } finally {
       setLoading(false);
     }

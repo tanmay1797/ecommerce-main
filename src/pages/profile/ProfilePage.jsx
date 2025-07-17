@@ -17,6 +17,8 @@ const ProfilePage = ({ loggedInUser }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  // console.log("loggedInUser", loggedInUser);
+
   if (!loggedInUser) {
     return (
       <div className="container text-center mt-5">
@@ -130,6 +132,22 @@ const ProfilePage = ({ loggedInUser }) => {
               <strong>Email:</strong> {loggedInUser.email}
             </span>
           </li>
+
+          <li className="list-group-item d-flex justify-content-between">
+            <span>
+              <strong>Date of Birth:</strong>{" "}
+              {loggedInUser.dob
+                ? new Date(loggedInUser.dob).toLocaleDateString("en-GB")
+                : "Not provided"}
+            </span>
+          </li>
+
+          <li className="list-group-item d-flex justify-content-between">
+            <span>
+              <strong>Gender:</strong> {loggedInUser.gender || "Not specified"}
+            </span>
+          </li>
+
           <li className="list-group-item d-flex justify-content-between">
             <span>
               <strong>Reset my password:</strong> **********
@@ -142,6 +160,7 @@ const ProfilePage = ({ loggedInUser }) => {
               <i className="fa-regular fa-pen-to-square"></i>
             </span>
           </li>
+
           <li className="list-group-item">
             <strong>Role:</strong> {loggedInUser.role || "User"}
           </li>

@@ -9,6 +9,8 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
+    dob: "",
+    gender: "",
   });
 
   const handleChange = (e) => {
@@ -25,8 +27,6 @@ const Register = () => {
     try {
       const response = await fetch(
         "http://192.168.1.182:8000/api/user/signup",
-        // "http://192.168.84.219:8000/api/user/signup",
-        // "http://10.155.196.219:8000/api/user/signup",
         {
           method: "POST",
           headers: {
@@ -39,16 +39,14 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // alert("Registration successful!");
         toast.success("Registration successful! Kindly Login Now");
         navigate("/login");
       } else {
-        // alert(data.message || "Registration failed!");
-        toast.success(data.message || "Registration failed!");
+        toast.error(data.message || "Registration failed!");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -72,6 +70,7 @@ const Register = () => {
                 onChange={handleChange}
               />
             </div>
+
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email
@@ -86,6 +85,7 @@ const Register = () => {
                 onChange={handleChange}
               />
             </div>
+
             <div className="mb-3">
               <label htmlFor="password" className="form-label">
                 Password
@@ -100,13 +100,47 @@ const Register = () => {
                 onChange={handleChange}
               />
             </div>
+
+            <div className="mb-3">
+              <label htmlFor="dob" className="form-label">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                className="form-control"
+                id="dob"
+                name="dob"
+                value={userDetails.dob}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="gender" className="form-label">
+                Gender
+              </label>
+              <select
+                className="form-select"
+                id="gender"
+                name="gender"
+                value={userDetails.gender}
+                onChange={handleChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
             <button type="submit" className="btn btn-success w-100">
               Register
             </button>
           </form>
+
           <div className="d-flex justify-content-center align-items-center mt-4">
             <span>
-              Already a user ? Login
+              Already a user? Login
               <a href="/login" className="text-decoration-none">
                 {" "}
                 here

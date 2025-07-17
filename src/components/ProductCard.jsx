@@ -34,7 +34,7 @@ const ProductCard = ({
 
   const handleAddToCart = async () => {
     if (!loggedInUser) {
-      setShowLoginModal(true); // ✅ trigger global modal
+      setShowLoginModal(true);
       return;
     }
 
@@ -63,44 +63,48 @@ const ProductCard = ({
   };
 
   return (
-    <>
-      <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-        <div
-          className={`card card-body h-100 shadow ${
-            loading ? "opacity-50" : ""
-          }`}
-        >
-          <img
-            src={product?.imageUrl}
-            className="card-img-top"
-            alt={product?.name}
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate(`/product/${product._id}`)}
-          />
-          <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{product?.name}</h5>
-            <p className="card-text">₹{product?.price}</p>
+    <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+      <div className={`card h-100 shadow ${loading ? "opacity-50" : ""}`}>
+        {/* ✅ Image updated for full width + fixed height */}
+        <img
+          src={product?.imageUrl}
+          className="card-img-top"
+          alt={product?.name}
+          style={{
+            height: "250px", // consistent image height
+            objectFit: "contain", // full image fit
+            cursor: "pointer",
+          }}
+          onClick={() => navigate(`/product/${product._id}`)}
+        />
 
-            {quantity === 0 ? (
-              <button
-                className="btn btn-primary mt-auto"
-                onClick={handleAddToCart}
-                disabled={loading}
-              >
-                Add to Cart
-              </button>
-            ) : (
-              <button
-                className="btn btn-success mt-auto"
-                onClick={() => navigate("/cart")}
-              >
-                Go to Cart
-              </button>
-            )}
+        <div className="card-body d-flex flex-column">
+          {/* ✅ Name and Price aligned in same row */}
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h5 className="card-title mb-0">{product?.name}</h5>
+            <span className="fw-bold text-muted">₹{product?.price}</span>
           </div>
+
+          {/* Add/Go to cart button */}
+          {quantity === 0 ? (
+            <button
+              className="btn btn-primary mt-auto"
+              onClick={handleAddToCart}
+              disabled={loading}
+            >
+              Add to Cart
+            </button>
+          ) : (
+            <button
+              className="btn btn-success mt-auto"
+              onClick={() => navigate("/cart")}
+            >
+              Go to Cart
+            </button>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -41,6 +41,8 @@ const Login = ({ setLoggedInUser }) => {
 
       const data = await response.json();
 
+      console.log("data", data);
+
       if (response.ok && data.success) {
         const decodedUser = jwtDecode(data.token);
         localStorage.setItem("token", data.token);

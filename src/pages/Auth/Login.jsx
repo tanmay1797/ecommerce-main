@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = ({ setLoggedInUser }) => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    new_email: "",
+    email: "",
     password: "",
   });
 
@@ -26,28 +27,23 @@ const Login = ({ setLoggedInUser }) => {
     setError(null);
 
     try {
-      const response = await fetch(
-        "http://192.168.1.182:8000/api/user/login",
-        // "http://192.168.84.219:8000/api/user/login",
-        // "http://10.155.196.219:8000/api/user/login",
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/user/login`,
+        credentials,
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(credentials),
+          withCredentials: true,
         }
       );
 
-      const data = await response.json();
-
       console.log("data", data);
 
-      if (response.ok && data.success) {
+      if (data.success) {
         const decodedUser = jwtDecode(data.token);
         localStorage.setItem("token", data.token);
         setLoggedInUser(decodedUser);
-        // alert("Login successful!");
         toast.success("Login successful!");
         navigate("/");
       } else {
@@ -55,7 +51,9 @@ const Login = ({ setLoggedInUser }) => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("An error occurred. Please try again.");
+      const errorMsg =
+        err.response?.data?.message || "An error occurred. Please try again.";
+      setError(errorMsg);
     }
   };
 
@@ -100,10 +98,10 @@ const Login = ({ setLoggedInUser }) => {
           </form>
           <div className="d-flex justify-content-center align-items-center mt-4">
             <span>
-              Does not have an account? Register
+              Don't have an account? Register
               <a href="/register" className="text-decoration-none">
                 {" "}
-                here
+                here{" "}
               </a>
             </span>
           </div>

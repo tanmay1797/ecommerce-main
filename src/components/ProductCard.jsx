@@ -15,12 +15,13 @@ const ProductCard = ({
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     if (!loggedInUser || !token) return;
 
     axios
-      .get("http://192.168.1.182:8000/api/user/cart", {
+      .get(`${BASE_URL}/user/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -41,7 +42,7 @@ const ProductCard = ({
     try {
       setLoading(true);
       await axios.post(
-        "http://192.168.1.182:8000/api/user/cart/add",
+        `${BASE_URL}/user/cart/add`,
         {
           productId: product._id,
           quantity: 1,
@@ -65,27 +66,24 @@ const ProductCard = ({
   return (
     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
       <div className={`card h-100 shadow ${loading ? "opacity-50" : ""}`}>
-        {/* ✅ Image updated for full width + fixed height */}
         <img
           src={product?.imageUrl}
           className="card-img-top"
           alt={product?.name}
           style={{
-            height: "250px", // consistent image height
-            objectFit: "contain", // full image fit
+            height: "250px",
+            objectFit: "contain",
             cursor: "pointer",
           }}
           onClick={() => navigate(`/product/${product._id}`)}
         />
 
         <div className="card-body d-flex flex-column">
-          {/* ✅ Name and Price aligned in same row */}
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h5 className="card-title mb-0">{product?.name}</h5>
             <span className="fw-bold text-muted">₹{product?.price}</span>
           </div>
 
-          {/* Add/Go to cart button */}
           {quantity === 0 ? (
             <button
               className="btn btn-primary mt-auto"

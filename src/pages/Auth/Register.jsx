@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,28 +26,25 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://192.168.1.182:8000/api/user/signup",
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/user/signup`,
+        userDetails,
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(userDetails),
+          withCredentials: true,
         }
       );
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("Registration successful! Kindly Login Now");
-        navigate("/login");
-      } else {
-        toast.error(data.message || "Registration failed!");
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.success("Registration successful! Kindly Login Now");
+      navigate("/login");
+    } catch (err) {
+      console.error("Registration error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      toast.error(errorMsg);
     }
   };
 
@@ -143,7 +141,7 @@ const Register = () => {
               Already a user? Login
               <a href="/login" className="text-decoration-none">
                 {" "}
-                here
+                here{" "}
               </a>
             </span>
           </div>

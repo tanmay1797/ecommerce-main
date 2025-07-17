@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // ✅ no curly braces
+import { jwtDecode } from "jwt-decode";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function LoginPromptModal({ show, onClose, onLoginSuccess }) {
   const navigate = useNavigate();
@@ -17,27 +20,28 @@ export default function LoginPromptModal({ show, onClose, onLoginSuccess }) {
     setError("");
 
     try {
-      const res = await fetch("http://192.168.1.182:8000/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const res = await axios.post(`${API_BASE_URL}/user/login`, {
+        email,
+        password,
       });
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (res.ok && data.success && data.token) {
-        const decodedUser = jwtDecode(data.token); // ✅ decode token
-        localStorage.setItem("token", data.token); // ✅ store token
-        onLoginSuccess(decodedUser); // ✅ update user state in App.js
-        onClose(); // ✅ close modal
+      if (res.status === 200 && data.success && data.token) {
+        const decodedUser = jwtDecode(data.token);
+        localStorage.setItem("token", data.token);
+        onLoginSuccess(decodedUser);
+        onClose();
       } else {
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("An error occurred. Please try again.");
+      if (err.response && err.response.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("An error occurred. Please try again.");
+      }
     } finally {
       setLoggingIn(false);
     }

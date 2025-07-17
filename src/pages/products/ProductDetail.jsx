@@ -16,7 +16,7 @@ const ProductDetail = ({ loggedInUser }) => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(
-          `http://192.168.1.182:8000/api/product/get/${productId}`
+          `${import.meta.env.VITE_API_BASE_URL}/product/get/${productId}`
         );
         setProduct(res.data);
       } catch (err) {
@@ -34,9 +34,12 @@ const ProductDetail = ({ loggedInUser }) => {
         const token = localStorage.getItem("token");
         if (!token || !productId) return;
 
-        const res = await axios.get("http://192.168.1.182:8000/api/user/cart", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/user/cart`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const cartItem = res.data.products.find(
           (item) => item.productId._id === productId
@@ -56,7 +59,6 @@ const ProductDetail = ({ loggedInUser }) => {
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      // alert("Please login first.");
       toast.error("Please login first.");
       return;
     }
@@ -64,7 +66,7 @@ const ProductDetail = ({ loggedInUser }) => {
     try {
       setLoading(true);
       await axios.post(
-        "http://192.168.1.182:8000/api/user/cart/add",
+        `${import.meta.env.VITE_API_BASE_URL}/user/cart/add`,
         {
           productId,
           quantity: 1,
@@ -102,7 +104,6 @@ const ProductDetail = ({ loggedInUser }) => {
   return (
     <div className="container py-5">
       <div className="row">
-        {/* LEFT - IMAGE */}
         <div className="col-md-5">
           <div className="border p-3 bg-white">
             <img
@@ -114,12 +115,10 @@ const ProductDetail = ({ loggedInUser }) => {
           </div>
         </div>
 
-        {/* RIGHT - DETAILS */}
         <div className="col-md-7">
           <h1 className="fw-bold border text-center">{product.name}</h1>
           <h3 className="text-muted text-center py-2">
-            Category:{" "}
-            <strong>{product.category?.name || "Uncategorized"}</strong>
+            Category: <strong>{product.category?.name || "Uncategorized"}</strong>
           </h3>
           <h3 className="text-muted text-center py-2">
             Price: <strong>₹{product.price}</strong>
@@ -129,11 +128,9 @@ const ProductDetail = ({ loggedInUser }) => {
             <span className="text-danger">50% off</span>
           </h3>
           <h3 className="text-muted text-center py-2">
-            Description:{" "}
-            <strong>{product.description || "No description"}</strong>
+            Description: <strong>{product.description || "No description"}</strong>
           </h3>
 
-          {/* Cart Buttons */}
           {loggedInUser ? (
             <div className="text-center">
               {quantity === 0 ? (

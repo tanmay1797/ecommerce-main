@@ -117,7 +117,7 @@ export default function Navbar({
                   }
                 }}
               >
-                Cart
+                <i className="fa fa-shopping-cart fs-3" aria-hidden="true"></i>
               </button>
             </li>
           </ul>

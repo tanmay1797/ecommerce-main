@@ -25,9 +25,8 @@ export default function ProductsPage({
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const res = await axios.get(
-          "http://192.168.1.182:8000/api/category/get",
+          `${import.meta.env.VITE_API_BASE_URL}/category/get`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -44,13 +43,14 @@ export default function ProductsPage({
     fetchCategories();
   }, []);
 
-  // ✅ Fetch paginated products
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://192.168.1.182:8000/api/product/get?limit=${PRODUCTS_PER_PAGE}&page=${currentPage}`
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/product/get?limit=${PRODUCTS_PER_PAGE}&page=${currentPage}`
         );
         setProducts(res.data.products);
         setTotalProducts(res.data.totalCount || res.data.total || 0);
@@ -66,7 +66,6 @@ export default function ProductsPage({
     fetchProducts();
   }, [currentPage, setProducts]);
 
-  // ✅ Filter logic based on category and search
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
       .toLowerCase()
@@ -103,7 +102,7 @@ export default function ProductsPage({
             <div
               className="card sticky-top"
               style={{
-                top: "70px", // adjust based on your Navbar height
+                top: "70px",
                 height: "calc(100vh - 70px)",
                 overflowY: "auto",
               }}

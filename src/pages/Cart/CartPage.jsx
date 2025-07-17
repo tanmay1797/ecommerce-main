@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function CartPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ export default function CartPage() {
   const fetchCart = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://192.168.1.182:8000/api/user/cart", {
+      const res = await axios.get(`${BASE_URL}/user/cart`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -20,14 +22,6 @@ export default function CartPage() {
     } catch (err) {
       console.error("Error fetching cart:", err);
       setError("Failed to load cart.");
-      // if (err.response?.status === 404) {
-      //   // Handle empty cart
-      //   setCart({ products: [], grandTotalPrice: 0 });
-      //   setError(null); // No error, just empty cart
-      // } else {
-      //   console.error("Error fetching cart:", err);
-      //   setError("Failed to load cart.");
-      // }
     } finally {
       setLoading(false);
     }
@@ -39,14 +33,11 @@ export default function CartPage() {
 
   const handleRemoveItem = async (productId) => {
     try {
-      await axios.delete(
-        `http://192.168.1.182:8000/api/user/cart/product/${productId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/user/cart/product/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       fetchCart();
       toast.success("Item removed from cart");
     } catch (err) {
@@ -64,9 +55,8 @@ export default function CartPage() {
     try {
       setLoading(true);
 
-      // Delete the existing item
       await axios.delete(
-        `http://192.168.1.182:8000/api/user/cart/product/${item.productId._id}`,
+        `${BASE_URL}/user/cart/product/${item.productId._id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -74,9 +64,8 @@ export default function CartPage() {
         }
       );
 
-      // Re-add with updated quantity
       await axios.post(
-        "http://192.168.1.182:8000/api/user/cart/add",
+        `${BASE_URL}/user/cart/add`,
         {
           productId: item.productId._id,
           quantity: newQty,
@@ -157,7 +146,7 @@ export default function CartPage() {
                       style={{
                         width: "50px",
                         height: "50px",
-                        objectFit: "cover",
+                        objectFit: "contain",
                       }}
                     />
                   </td>

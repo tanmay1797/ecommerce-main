@@ -3,15 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance";
 import FullPageSpinner from "../../components/FullPageSpinner";
+import { useCart } from "../../context/CartContext";
 
 const ProductDetail = ({ loggedInUser }) => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { cartProducts, fetchCart } = useCart(); // ✅ use context
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,23 +28,10 @@ const ProductDetail = ({ loggedInUser }) => {
     fetchProduct();
   }, [productId]);
 
-  useEffect(() => {
-    const fetchCartQuantity = async () => {
-      try {
-        const res = await axiosInstance.get(`/user/cart`);
-        const cartItem = res.data.products.find(
-          (item) => item.productId._id === productId
-        );
-        if (cartItem) {
-          setQuantity(Number(cartItem.quantity));
-        }
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-      }
-    };
-
-    fetchCartQuantity();
-  }, [productId]);
+  const cartItem = cartProducts.find(
+    (item) => item.productId._id === productId
+  );
+  const quantity = cartItem ? Number(cartItem.quantity) : 0;
 
   const handleAddToCart = async () => {
     try {
@@ -52,8 +40,11 @@ const ProductDetail = ({ loggedInUser }) => {
         productId,
         quantity: 1,
       });
-      setQuantity(1);
-      toast.success("Item added to cart!");
+      await fetchCart(); // ✅ refresh cart context
+      // toast.success("Item added to cart!");
+      setTimeout(() => {
+        navigate("/cart");
+      }, 1000);
     } catch (error) {
       console.error("Error adding to cart:", error);
     } finally {

@@ -1,16 +1,16 @@
 import React from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCart } from "../context/CartContext"; // ✅ Custom cart context
 
 export default function Navbar({
   loggedInUser,
   setLoggedInUser,
   setSearchTerm,
-  cartProducts,
 }) {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { cartCount } = useCart(); // ✅ Get cart count from context
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -61,38 +61,35 @@ export default function Navbar({
 
           <ul className="navbar-nav ms-auto align-items-center">
             {loggedInUser ? (
-              <>
-                <li className="nav-item dropdown">
-                  <button
-                    className="nav-link dropdown-toggle text-primary btn btn-link"
-                    id="userDropdown"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    type="button"
-                  >
-                    Welcome,{" "}
-                    <strong className="fs-5">{loggedInUser.name}</strong>
-                  </button>
-                  <ul
-                    className="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="userDropdown"
-                  >
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={() => navigate("/profile")}
-                      >
-                        My Profile
-                      </button>
-                    </li>
-                    <li>
-                      <button className="dropdown-item" onClick={handleLogout}>
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                </li>
-              </>
+              <li className="nav-item dropdown">
+                <button
+                  className="nav-link dropdown-toggle text-primary btn btn-link"
+                  id="userDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  type="button"
+                >
+                  Welcome, <strong className="fs-5">{loggedInUser.name}</strong>
+                </button>
+                <ul
+                  className="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="userDropdown"
+                >
+                  <li>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => navigate("/profile")}
+                    >
+                      My Profile
+                    </button>
+                  </li>
+                  <li>
+                    <button className="dropdown-item" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </li>
             ) : (
               <>
                 <li className="nav-item">
@@ -108,7 +105,7 @@ export default function Navbar({
               </>
             )}
 
-            <li className="nav-item">
+            <li className="nav-item position-relative">
               <button
                 className="nav-link btn btn-link text-decoration-none"
                 onClick={() => {
@@ -120,6 +117,12 @@ export default function Navbar({
                 }}
               >
                 <i className="fa fa-shopping-cart fs-3" aria-hidden="true"></i>
+                {/* ✅ Only show cart count when user is logged in and has items */}
+                {loggedInUser && cartCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger my-2">
+                    {cartCount}
+                  </span>
+                )}
               </button>
             </li>
           </ul>

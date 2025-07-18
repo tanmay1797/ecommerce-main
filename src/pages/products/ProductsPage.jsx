@@ -20,6 +20,7 @@ export default function ProductsPage({
   const [totalProducts, setTotalProducts] = useState(0);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOption, setSortOption] = useState("default");
 
   const PRODUCTS_PER_PAGE = 8;
 
@@ -80,6 +81,19 @@ export default function ProductsPage({
     return matchesSearch && matchesCategory;
   });
 
+  // ✅ Sort filtered products based on selected option
+  const sortedProducts = [...filteredProducts];
+
+  if (sortOption === "priceLowHigh") {
+    sortedProducts.sort((a, b) => a.price - b.price);
+  } else if (sortOption === "priceHighLow") {
+    sortedProducts.sort((a, b) => b.price - a.price);
+  } else if (sortOption === "nameAsc") {
+    sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortOption === "nameDesc") {
+    sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+  }
+
   const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
 
   const handlePageChange = (pageNum) => {
@@ -102,15 +116,29 @@ export default function ProductsPage({
 
           {/* Product Grid */}
           <div className="col-md-10">
-            <h2 className="mb-4">Featured Products</h2>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h2 className="mb-0">Featured Products</h2>
+              {/* ✅ Sort Dropdown */}
+              <select
+                className="form-select w-auto"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="default">Sort By</option>
+                <option value="priceLowHigh">Price: Low to High</option>
+                <option value="priceHighLow">Price: High to Low</option>
+                <option value="nameAsc">Name: A to Z</option>
+                <option value="nameDesc">Name: Z to A</option>
+              </select>
+            </div>
 
             {loading ? (
               <p>Loading products...</p>
             ) : error ? (
               <p className="text-danger">{error}</p>
-            ) : filteredProducts.length > 0 ? (
+            ) : sortedProducts.length > 0 ? (
               <div className="row">
-                {filteredProducts.map((product) => (
+                {sortedProducts.map((product) => (
                   <ProductCard
                     key={product._id}
                     product={product}
@@ -125,7 +153,7 @@ export default function ProductsPage({
             )}
 
             {/* Pagination */}
-            {filteredProducts.length > 0 && totalPages > 1 && (
+            {sortedProducts.length > 0 && totalPages > 1 && (
               <nav className="mt-4 d-flex justify-content-center">
                 <ul className="pagination">
                   <li

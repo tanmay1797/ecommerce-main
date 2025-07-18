@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-// import FullPageSpinner from "../../components/FullPageSpinner";
+import { useCart } from "../../context/CartContext";
 
 export default function CartPage() {
-  const [cart, setCart] = useState(null);
-  // const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchCart = async () => {
-    // setLoading(true);
-    try {
-      const res = await axiosInstance.get("/user/cart");
-      setCart(res.data);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching cart:", err);
-      setError("Failed to load cart.");
-    } finally {
-      // setLoading(false);
-    }
-  };
+  const { cartProducts, setCartProducts, fetchCart, cartCount } = useCart();
 
   useEffect(() => {
     fetchCart();
@@ -30,7 +14,7 @@ export default function CartPage() {
   const handleRemoveItem = async (productId) => {
     try {
       await axiosInstance.delete(`/user/cart/product/${productId}`);
-      fetchCart();
+      await fetchCart(); // update context
       toast.success("Item removed from cart");
     } catch (err) {
       toast.error("Error removing item.");
@@ -45,23 +29,14 @@ export default function CartPage() {
     }
 
     try {
-      // setLoading(true);
-
-      // Remove previous item entry
       await axiosInstance.delete(`/user/cart/product/${item.productId._id}`);
-
-      // Re-add with new quantity
       await axiosInstance.post(`/user/cart/add`, {
         productId: item.productId._id,
         quantity: newQty,
       });
-
-      fetchCart();
-      // toast.info(`Quantity ${delta > 0 ? "increased" : "decreased"} by 1`);
+      await fetchCart(); // update context
     } catch (err) {
       console.error("Error updating quantity:", err);
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -69,11 +44,7 @@ export default function CartPage() {
     alert("Proceeding to checkout...");
   };
 
-  // if (loading) {
-  //   return <FullPageSpinner />;
-  // }
-
-  if (!cart || cart.products?.length === 0) {
+  if (!cartProducts || cartProducts.length === 0) {
     return (
       <div className="container text-center mt-5">
         <img
@@ -111,7 +82,7 @@ export default function CartPage() {
             </tr>
           </thead>
           <tbody>
-            {[...cart.products]
+            {[...cartProducts]
               .sort((a, b) => a.productId.name.localeCompare(b.productId.name))
               .map((item) => (
                 <tr key={item.productId._id}>
@@ -169,7 +140,12 @@ export default function CartPage() {
 
       <div className="d-flex justify-content-between align-items-center mt-4">
         <h5>
-          <strong>Total: ₹{cart.grandTotalPrice.toFixed(2)}</strong>
+          <strong>
+            Total: ₹
+            {cartProducts
+              .reduce((acc, item) => acc + item.totalPrice, 0)
+              .toFixed(2)}
+          </strong>
         </h5>
         <button className="btn btn-success" onClick={handleCheckout}>
           Proceed to Checkout

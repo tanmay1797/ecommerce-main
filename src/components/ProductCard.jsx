@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import LoginPromptModal from "./LoginPromptModal";
-import axiosInstance from "../utils/axiosInstance"; // ✅ use centralized axios
+import axiosInstance from "../utils/axiosInstance";
+import { useCart } from "../context/CartContext"; // ✅ Import context
 
 const ProductCard = ({
   product,
@@ -13,8 +14,9 @@ const ProductCard = ({
   const [quantity, setQuantity] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
+
+  const { fetchCart } = useCart(); // ✅ Get fetchCart from context
 
   useEffect(() => {
     if (!loggedInUser || !token) return;
@@ -53,6 +55,7 @@ const ProductCard = ({
         }
       );
       setQuantity(1);
+      await fetchCart(); // ✅ Refresh context state
       // toast.success("Item added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error);

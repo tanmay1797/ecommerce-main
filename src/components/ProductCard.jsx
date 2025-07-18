@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import LoginPromptModal from "./LoginPromptModal";
 import { toast } from "react-toastify";
+import LoginPromptModal from "./LoginPromptModal";
+import axiosInstance from "../utils/axiosInstance"; // ✅ use centralized axios
 
 const ProductCard = ({
   product,
@@ -15,13 +15,12 @@ const ProductCard = ({
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     if (!loggedInUser || !token) return;
 
-    axios
-      .get(`${BASE_URL}/user/cart`, {
+    axiosInstance
+      .get("/user/cart", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -41,8 +40,8 @@ const ProductCard = ({
 
     try {
       setLoading(true);
-      await axios.post(
-        `${BASE_URL}/user/cart/add`,
+      await axiosInstance.post(
+        "/user/cart/add",
         {
           productId: product._id,
           quantity: 1,

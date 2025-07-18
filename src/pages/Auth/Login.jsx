@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance"; // ✅ centralized axios
 
 const Login = ({ setLoggedInUser }) => {
   const navigate = useNavigate();
@@ -27,18 +27,7 @@ const Login = ({ setLoggedInUser }) => {
     setError(null);
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/user/login`,
-        credentials,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
-      console.log("data", data);
+      const { data } = await axiosInstance.post("/user/login", credentials);
 
       if (data.success) {
         const decodedUser = jwtDecode(data.token);

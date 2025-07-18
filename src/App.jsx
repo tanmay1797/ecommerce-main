@@ -44,8 +44,6 @@ function App() {
     return <p className="text-center mt-5">Loading...</p>;
   }
 
-  console.log("loggedInuser", loggedInUser);
-
   return (
     <Router>
       <Navbar

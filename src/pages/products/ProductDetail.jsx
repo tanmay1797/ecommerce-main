@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../../utils/axiosInstance";
+import FullPageSpinner from "../../components/FullPageSpinner";
 
 const ProductDetail = ({ loggedInUser }) => {
   const { productId } = useParams();
@@ -15,9 +16,7 @@ const ProductDetail = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/product/get/${productId}`
-        );
+        const res = await axiosInstance.get(`/product/get/${productId}`);
         setProduct(res.data);
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -31,20 +30,10 @@ const ProductDetail = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchCartQuantity = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token || !productId) return;
-
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/user/cart`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
+        const res = await axiosInstance.get(`/user/cart`);
         const cartItem = res.data.products.find(
           (item) => item.productId._id === productId
         );
-
         if (cartItem) {
           setQuantity(Number(cartItem.quantity));
         }
@@ -57,24 +46,12 @@ const ProductDetail = ({ loggedInUser }) => {
   }, [productId]);
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login first.");
-      return;
-    }
-
     try {
       setLoading(true);
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/user/cart/add`,
-        {
-          productId,
-          quantity: 1,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axiosInstance.post("/user/cart/add", {
+        productId,
+        quantity: 1,
+      });
       setQuantity(1);
       toast.success("Item added to cart!");
     } catch (error) {
@@ -91,21 +68,16 @@ const ProductDetail = ({ loggedInUser }) => {
       </div>
     );
 
-  if (!product)
-    return (
-      <div className="container py-5 text-center">
-        <div className="spinner-border" role="status" />
-        <p>Loading product...</p>
-      </div>
-    );
+  if (!product) return <FullPageSpinner />;
 
   const originalPrice = product.price + 3000;
 
   return (
     <div className="container py-5">
       <div className="row">
+        {/* Product Image */}
         <div className="col-md-5">
-          <div className="border p-3 bg-white">
+          <div className="border p-3 bg-white shadow-sm rounded">
             <img
               src={product.imageUrl}
               alt={product.name}
@@ -115,48 +87,59 @@ const ProductDetail = ({ loggedInUser }) => {
           </div>
         </div>
 
-        <div className="col-md-7">
-          <h1 className="fw-bold border text-center">{product.name}</h1>
-          <h3 className="text-muted text-center py-2">
-            Category: <strong>{product.category?.name || "Uncategorized"}</strong>
-          </h3>
-          <h3 className="text-muted text-center py-2">
-            Price: <strong>₹{product.price}</strong>
-          </h3>
-          <h3 className="mb-0">
-            <del className="text-muted">₹{originalPrice}</del>{" "}
-            <span className="text-danger">50% off</span>
-          </h3>
-          <h3 className="text-muted text-center py-2">
-            Description: <strong>{product.description || "No description"}</strong>
-          </h3>
+        {/* Product Details */}
+        <div className="col-md-7 mt-md-5">
+          <div className="bg-light p-4 rounded shadow-sm">
+            <h1 className="fw-bold text-center border-bottom pb-2">
+              {product.name}
+            </h1>
 
-          {loggedInUser ? (
-            <div className="text-center">
-              {quantity === 0 ? (
-                <button
-                  className="btn btn-warning fw-bold w-100 py-3 fs-5 mt-4"
-                  style={{ maxWidth: "400px" }}
-                  onClick={handleAddToCart}
-                  disabled={loading}
-                >
-                  🛒 ADD TO CART
-                </button>
-              ) : (
-                <button
-                  className="btn btn-success fw-bold w-100 py-3 fs-5 mt-4"
-                  style={{ maxWidth: "400px" }}
-                  onClick={() => navigate("/cart")}
-                >
-                  ✅ GO TO CART
-                </button>
-              )}
-            </div>
-          ) : (
-            <p className="text-muted mt-4">
-              <i>Please login to add this product to your cart.</i>
+            <p className="text-center mb-2">
+              <strong className="text-muted">Category:</strong>{" "}
+              {product.category?.name || "Uncategorized"}
             </p>
-          )}
+
+            <p className="text-center mb-2">
+              <strong className="text-muted">Price:</strong> ₹{product.price}
+            </p>
+
+            <p className="text-center mb-2">
+              <del className="text-muted">₹{originalPrice}</del>{" "}
+              <span className="text-danger fw-bold">50% off</span>
+            </p>
+
+            <p className="text-center mb-4">
+              <strong className="text-muted">Description:</strong>{" "}
+              {product.description || "No description available."}
+            </p>
+
+            {loggedInUser ? (
+              <div className="text-center">
+                {quantity === 0 ? (
+                  <button
+                    className="btn btn-warning fw-bold w-100 py-3 fs-5"
+                    style={{ maxWidth: "400px" }}
+                    onClick={handleAddToCart}
+                    disabled={loading}
+                  >
+                    🛒 ADD TO CART
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-success fw-bold w-100 py-3 fs-5"
+                    style={{ maxWidth: "400px" }}
+                    onClick={() => navigate("/cart")}
+                  >
+                    ✅ GO TO CART
+                  </button>
+                )}
+              </div>
+            ) : (
+              <p className="text-muted text-center mt-3">
+                <i>Please login to add this product to your cart.</i>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

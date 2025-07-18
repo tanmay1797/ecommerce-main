@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import Footer from "../../components/Footer";
 import ProductCard from "../../components/ProductCard";
 import "../../App.css";
+import Sidebar from "../../components/Sidebar";
+import Carousel from "../../components/Carousel";
 
 export default function ProductsPage({
   products,
@@ -25,16 +27,11 @@ export default function ProductsPage({
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/category/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axiosInstance.get("/category/get", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        setCategories([{ name: "All", _id: null }, ...res.data]);
+        setCategories([{ name: "All", _id: null }, ...res.data.data]);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -47,11 +44,10 @@ export default function ProductsPage({
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(
-          `${
-            import.meta.env.VITE_API_BASE_URL
-          }/product/get?limit=${PRODUCTS_PER_PAGE}&page=${currentPage}`
+        const res = await axiosInstance.get(
+          `/product/get?limit=${PRODUCTS_PER_PAGE}&page=${currentPage}`
         );
+
         setProducts(res.data.products);
         setTotalProducts(res.data.totalCount || res.data.total || 0);
         setError(null);
@@ -74,7 +70,6 @@ export default function ProductsPage({
     const selectedCategoryObj = categories.find(
       (cat) => cat.name === selectedCategory
     );
-
     const selectedCategoryId = selectedCategoryObj?._id;
 
     const matchesCategory =
@@ -96,34 +91,14 @@ export default function ProductsPage({
   return (
     <div className="app-container d-flex flex-column min-vh-100">
       <div className="container-fluid py-5 flex-grow-1">
+        <Carousel />
         <div className="row">
           {/* Sidebar - Category Filter */}
-          <div className="col-md-2 mb-4">
-            <div
-              className="card sticky-top"
-              style={{
-                top: "70px",
-                height: "calc(100vh - 70px)",
-                overflowY: "auto",
-              }}
-            >
-              <div className="card-header fw-bold">Filter by Category</div>
-              <ul className="list-group list-group-flush">
-                {categories.map((cat) => (
-                  <li
-                    key={cat.name}
-                    className={`list-group-item ${
-                      selectedCategory === cat.name ? "active" : ""
-                    }`}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setSelectedCategory(cat.name)}
-                  >
-                    {cat.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <Sidebar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
 
           {/* Product Grid */}
           <div className="col-md-10">

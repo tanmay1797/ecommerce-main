@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance"; // ✅ centralized axios
 
 const Register = () => {
   const navigate = useNavigate();
@@ -26,19 +26,14 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/user/signup`,
-        userDetails,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axiosInstance.post("/user/signup", userDetails);
 
-      toast.success("Registration successful! Kindly Login Now");
-      navigate("/login");
+      if (data.success) {
+        toast.success("Registration successful! Kindly Login Now");
+        navigate("/login");
+      } else {
+        toast.error(data.message || "Registration failed. Try again.");
+      }
     } catch (err) {
       console.error("Registration error:", err);
       const errorMsg =
@@ -138,10 +133,9 @@ const Register = () => {
 
           <div className="d-flex justify-content-center align-items-center mt-4">
             <span>
-              Already a user? Login
+              Already a user? Login{" "}
               <a href="/login" className="text-decoration-none">
-                {" "}
-                here{" "}
+                here
               </a>
             </span>
           </div>

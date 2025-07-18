@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { Link } from "react-router-dom";
+import FullPageSpinner from "../../components/FullPageSpinner";
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
@@ -12,11 +12,7 @@ export default function CartPage() {
   const fetchCart = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/user/cart`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axiosInstance.get("/user/cart");
       setCart(res.data);
       setError(null);
     } catch (err) {
@@ -33,15 +29,11 @@ export default function CartPage() {
 
   const handleRemoveItem = async (productId) => {
     try {
-      await axios.delete(`${BASE_URL}/user/cart/product/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await axiosInstance.delete(`/user/cart/product/${productId}`);
       fetchCart();
       toast.success("Item removed from cart");
     } catch (err) {
-      toast.error("Error removing item:", err);
+      toast.error("Error removing item.");
     }
   };
 
@@ -55,32 +47,17 @@ export default function CartPage() {
     try {
       setLoading(true);
 
-      await axios.delete(
-        `${BASE_URL}/user/cart/product/${item.productId._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      // Remove previous item entry
+      await axiosInstance.delete(`/user/cart/product/${item.productId._id}`);
 
-      await axios.post(
-        `${BASE_URL}/user/cart/add`,
-        {
-          productId: item.productId._id,
-          quantity: newQty,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      // Re-add with new quantity
+      await axiosInstance.post(`/user/cart/add`, {
+        productId: item.productId._id,
+        quantity: newQty,
+      });
 
       fetchCart();
-      toast.info(
-        `Quantity has been ${delta > 0 ? "increased" : "decreased"} by 1`
-      );
+      toast.info(`Quantity ${delta > 0 ? "increased" : "decreased"} by 1`);
     } catch (err) {
       console.error("Error updating quantity:", err);
     } finally {
@@ -92,7 +69,9 @@ export default function CartPage() {
     alert("Proceeding to checkout...");
   };
 
-  if (loading) return <p className="text-center mt-5">Loading cart...</p>;
+  if (loading) {
+    return <FullPageSpinner />;
+  }
 
   if (!cart || cart.products?.length === 0) {
     return (
@@ -108,9 +87,9 @@ export default function CartPage() {
         <p className="text-muted mb-3">
           Looks like you haven't added anything yet.
         </p>
-        <a href="/" className="btn btn-outline-primary">
+        <Link to="/" className="btn btn-outline-primary">
           Browse Products
-        </a>
+        </Link>
       </div>
     );
   }
@@ -154,6 +133,7 @@ export default function CartPage() {
                   <td>{item.productId.price.toFixed(2)}</td>
                   <td className="d-flex gap-2 align-items-center">
                     <button
+                      type="button"
                       className="btn btn-sm btn-outline-secondary"
                       onClick={() => handleChangeQuantity(item, -1)}
                     >
@@ -161,6 +141,7 @@ export default function CartPage() {
                     </button>
                     <span>{item.quantity}</span>
                     <button
+                      type="button"
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handleChangeQuantity(item, 1)}
                     >
@@ -170,6 +151,7 @@ export default function CartPage() {
                   <td>{item.totalPrice.toFixed(2)}</td>
                   <td>
                     <button
+                      type="button"
                       className="btn btn-sm btn-danger"
                       onClick={() => handleRemoveItem(item.productId._id)}
                     >

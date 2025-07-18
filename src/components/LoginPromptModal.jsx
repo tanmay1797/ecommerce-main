@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import axiosInstance from "../utils/axiosInstance";
 
 export default function LoginPromptModal({ show, onClose, onLoginSuccess }) {
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ export default function LoginPromptModal({ show, onClose, onLoginSuccess }) {
     setError("");
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/user/login`, {
+      const res = await axiosInstance.post("/user/login", {
         email,
         password,
       });

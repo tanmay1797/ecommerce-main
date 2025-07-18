@@ -6,9 +6,11 @@ export default function Navbar({
   loggedInUser,
   setLoggedInUser,
   setSearchTerm,
+  cartProducts,
 }) {
   const location = useLocation();
   const navigate = useNavigate();
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");

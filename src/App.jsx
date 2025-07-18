@@ -51,6 +51,7 @@ function App() {
         setLoggedInUser={setLoggedInUser}
         setSearchTerm={setSearchTerm}
         showLoginModal={showLoginModal}
+        cartProducts={cartProducts}
       />
       <Routes>
         <Route

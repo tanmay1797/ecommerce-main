@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import FullPageSpinner from "../../components/FullPageSpinner";
+// import FullPageSpinner from "../../components/FullPageSpinner";
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchCart = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const res = await axiosInstance.get("/user/cart");
       setCart(res.data);
@@ -19,7 +19,7 @@ export default function CartPage() {
       console.error("Error fetching cart:", err);
       setError("Failed to load cart.");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -45,7 +45,7 @@ export default function CartPage() {
     }
 
     try {
-      setLoading(true);
+      // setLoading(true);
 
       // Remove previous item entry
       await axiosInstance.delete(`/user/cart/product/${item.productId._id}`);
@@ -57,11 +57,11 @@ export default function CartPage() {
       });
 
       fetchCart();
-      toast.info(`Quantity ${delta > 0 ? "increased" : "decreased"} by 1`);
+      // toast.info(`Quantity ${delta > 0 ? "increased" : "decreased"} by 1`);
     } catch (err) {
       console.error("Error updating quantity:", err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -69,9 +69,9 @@ export default function CartPage() {
     alert("Proceeding to checkout...");
   };
 
-  if (loading) {
-    return <FullPageSpinner />;
-  }
+  // if (loading) {
+  //   return <FullPageSpinner />;
+  // }
 
   if (!cart || cart.products?.length === 0) {
     return (

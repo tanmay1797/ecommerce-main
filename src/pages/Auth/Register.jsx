@@ -134,9 +134,12 @@ const Register = () => {
           <div className="d-flex justify-content-center align-items-center mt-4">
             <span>
               Already a user? Login{" "}
-              <a href="/login" className="text-decoration-none">
+              <button
+                onClick={() => navigate("/login")}
+                className="text-decoration-none"
+              >
                 here
-              </a>
+              </button>
             </span>
           </div>
         </div>

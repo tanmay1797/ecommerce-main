@@ -84,6 +84,14 @@ export default function Navbar({
                     </button>
                   </li>
                   <li>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => navigate("/my-orders")}
+                    >
+                      My Orders
+                    </button>
+                  </li>
+                  <li>
                     <button className="dropdown-item" onClick={handleLogout}>
                       Logout
                     </button>
@@ -117,7 +125,6 @@ export default function Navbar({
                 }}
               >
                 <i className="fa fa-shopping-cart fs-3" aria-hidden="true"></i>
-                {/* ✅ Only show cart count when user is logged in and has items */}
                 {loggedInUser && cartCount > 0 && (
                   <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger my-2">
                     {cartCount}

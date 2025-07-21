@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 
 export default function CartPage() {
   const { cartProducts, setCartProducts, fetchCart, cartCount } = useCart();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCart();
@@ -41,7 +43,7 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
-    alert("Proceeding to checkout...");
+    navigate("/checkout");
   };
 
   if (!cartProducts || cartProducts.length === 0) {

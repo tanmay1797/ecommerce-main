@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance"; // ✅ centralized axios
@@ -81,6 +81,14 @@ const Login = ({ setLoggedInUser }) => {
                 onChange={handleChange}
               />
             </div>
+            <div className="text-center mb-3">
+              <Link
+                to="/forgot-password"
+                className="text-decoration-none text-info"
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <button type="submit" className="btn btn-success w-100">
               Login
             </button>
@@ -88,10 +96,13 @@ const Login = ({ setLoggedInUser }) => {
           <div className="d-flex justify-content-center align-items-center mt-4">
             <span>
               Don't have an account? Register
-              <a href="/register" className="text-decoration-none">
+              <button
+                onClick={() => navigate("/register")}
+                className="text-decoration-none"
+              >
                 {" "}
                 here{" "}
-              </a>
+              </button>
             </span>
           </div>
         </div>

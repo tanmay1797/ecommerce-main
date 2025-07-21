@@ -17,7 +17,6 @@ const Carousel = () => {
     fetchCarouselImages();
   }, []);
 
-  // Bootstrap JS auto-init if needed
   useEffect(() => {
     if (images.length > 0 && window.bootstrap) {
       const el = document.querySelector("#carouselExampleAutoplaying");

@@ -17,6 +17,9 @@ import ProductDetail from "./pages/products/ProductDetail";
 // toast
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Checkout from "./pages/Cart/Checkout";
+import MyOrders from "./pages/products/MyOrders";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -71,6 +74,7 @@ function App() {
           path="/login"
           element={<Login setLoggedInUser={setLoggedInUser} />}
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route
           path="/profile"
@@ -94,6 +98,23 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute loggedInUser={loggedInUser}>
+              <Checkout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-orders"
+          element={
+            <PrivateRoute loggedInUser={loggedInUser}>
+              <MyOrders />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/product/:productId"
           element={<ProductDetail loggedInUser={loggedInUser} />}

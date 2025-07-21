@@ -77,7 +77,13 @@ const ProductCard = ({
             objectFit: "contain",
             cursor: "pointer",
           }}
-          onClick={() => navigate(`/product/${product._id}`)}
+          onClick={() =>
+            navigate(`/product/${product._id}`, {
+              state: {
+                product,
+              },
+            })
+          }
         />
 
         <div className="card-body d-flex flex-column">

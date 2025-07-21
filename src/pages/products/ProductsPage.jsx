@@ -145,6 +145,7 @@ export default function ProductsPage({
                     loggedInUser={loggedInUser}
                     setLoggedInUser={setLoggedInUser}
                     setShowLoginModal={setShowLoginModal}
+                    categories={categories}
                   />
                 ))}
               </div>

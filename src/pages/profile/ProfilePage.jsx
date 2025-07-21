@@ -11,9 +11,7 @@ const ProfilePage = ({ loggedInUser }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -42,15 +40,11 @@ const ProfilePage = ({ loggedInUser }) => {
     setNewPassword("");
   };
 
-  console.log(import.meta.env.VITE_API_BASE_URL);
-
   const handleOtpSend = async () => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/user/forgot-password`,
-        {
-          email: emailForReset,
-        }
+        { email: emailForReset }
       );
 
       if (data.success) {
@@ -60,7 +54,6 @@ const ProfilePage = ({ loggedInUser }) => {
         toast.error(data.message || "Failed to send OTP.");
       }
     } catch (err) {
-      console.error("OTP send error:", err);
       toast.error("An error occurred while sending OTP.");
     }
   };
@@ -88,10 +81,20 @@ const ProfilePage = ({ loggedInUser }) => {
         toast.error(data.message || "Failed to update password.");
       }
     } catch (err) {
-      console.error("Password reset error:", err);
       toast.error("An error occurred while updating password.");
     }
   };
+
+  const {
+    name,
+    email,
+    phone,
+    dob,
+    gender,
+    profileImage,
+    role,
+    address = {},
+  } = loggedInUser;
 
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
@@ -102,33 +105,67 @@ const ProfilePage = ({ loggedInUser }) => {
         <div className="text-center mb-4">
           <img
             src={
-              "https://images.unsplash.com/photo-1740252117044-2af197eea287?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              profileImage ||
+              "https://images.unsplash.com/photo-1740252117044-2af197eea287?q=80&w=880&auto=format&fit=crop"
             }
             alt="Profile"
-            className="rounded-circle"
+            className="rounded-circle object-fit-cover"
             width="120"
             height="120"
           />
         </div>
-        <h4 className="text-center mb-3">{loggedInUser.name}</h4>
+
+        <h4 className="text-center mb-3">{name}</h4>
+
         <ul className="list-group list-group-flush">
-          <li className="list-group-item d-flex justify-content-between">
-            <span>
-              <strong>Email:</strong> {loggedInUser.email}
-            </span>
+          <li className="list-group-item">
+            <strong>Email:</strong> {email}
           </li>
-          <li className="list-group-item d-flex justify-content-between">
-            <span>
-              <strong>Date of Birth:</strong>{" "}
-              {loggedInUser.dob
-                ? new Date(loggedInUser.dob).toLocaleDateString("en-GB")
-                : "Not provided"}
-            </span>
+          <li className="list-group-item">
+            <strong>Phone:</strong> {phone || "Not provided"}
           </li>
-          <li className="list-group-item d-flex justify-content-between">
-            <span>
-              <strong>Gender:</strong> {loggedInUser.gender || "Not specified"}
-            </span>
+          <li className="list-group-item">
+            <strong>Date of Birth:</strong>{" "}
+            {dob ? new Date(dob).toLocaleDateString("en-GB") : "Not provided"}
+          </li>
+          <li className="list-group-item">
+            <strong>Gender:</strong> {gender || "Not specified"}
+          </li>
+          <li className="list-group-item">
+            <strong>Address:</strong>
+            <div className="ms-2 mt-1">
+              {address?.street && (
+                <div>
+                  <strong>Street:</strong> {address.street}
+                </div>
+              )}
+              {address?.city && (
+                <div>
+                  <strong>City:</strong> {address.city}
+                </div>
+              )}
+              {address?.state && (
+                <div>
+                  <strong>State:</strong> {address.state}
+                </div>
+              )}
+              {address?.postalCode && (
+                <div>
+                  <strong>Postal Code:</strong> {address.postalCode}
+                </div>
+              )}
+              {address?.country && (
+                <div>
+                  <strong>Country:</strong> {address.country}
+                </div>
+              )}
+
+              {!address?.street &&
+                !address?.city &&
+                !address?.state &&
+                !address?.postalCode &&
+                !address?.country && <div>Not provided</div>}
+            </div>
           </li>
           <li className="list-group-item d-flex justify-content-between">
             <span>
@@ -143,7 +180,7 @@ const ProfilePage = ({ loggedInUser }) => {
             </span>
           </li>
           <li className="list-group-item">
-            <strong>Role:</strong> {loggedInUser.role || "User"}
+            <strong>Role:</strong> {role || "User"}
           </li>
         </ul>
       </div>

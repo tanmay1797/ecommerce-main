@@ -8,7 +8,7 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const [cartProducts, setCartProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+
   const fetchCart = async () => {
     try {
       setLoading(true);
@@ -22,7 +22,10 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchCart();
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchCart();
+    }
   }, []);
 
   return (

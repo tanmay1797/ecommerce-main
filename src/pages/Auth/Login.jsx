@@ -98,10 +98,9 @@ const Login = ({ setLoggedInUser }) => {
               Don't have an account? Register
               <button
                 onClick={() => navigate("/register")}
-                className="text-decoration-none"
+                className="btn btn-link p-0 m-0"
               >
-                {" "}
-                here{" "}
+                here
               </button>
             </span>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axiosInstance from "../../utils/axiosInstance"; // ✅ centralized axios
+import axiosInstance from "../../utils/axiosInstance";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -14,6 +14,8 @@ const Register = () => {
     gender: "",
   });
 
+  const [profileImage, setProfileImage] = useState(null); // ✅ for image
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserDetails((prev) => ({
@@ -22,11 +24,30 @@ const Register = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!profileImage) {
+      toast.error("Profile image is required");
+      return;
+    }
+
     try {
-      const { data } = await axiosInstance.post("/user/signup", userDetails);
+      const formData = new FormData();
+      Object.entries(userDetails).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      formData.append("profileImage", profileImage); // ✅ append image
+
+      const { data } = await axiosInstance.post("/user/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (data.success) {
         toast.success("Registration successful! Kindly Login Now");
@@ -48,7 +69,7 @@ const Register = () => {
       <div className="row w-100">
         <div className="col-12 col-sm-10 col-md-8 col-lg-6 mx-auto shadow p-4 rounded">
           <h2 className="mb-4 text-center">Register Here</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="mb-3">
               <label htmlFor="name" className="form-label">
                 Name
@@ -58,9 +79,9 @@ const Register = () => {
                 className="form-control"
                 id="name"
                 name="name"
-                placeholder="Enter name"
                 value={userDetails.name}
                 onChange={handleChange}
+                placeholder="Enter name"
               />
             </div>
 
@@ -73,9 +94,9 @@ const Register = () => {
                 className="form-control"
                 id="email"
                 name="email"
-                placeholder="Enter email"
                 value={userDetails.email}
                 onChange={handleChange}
+                placeholder="Enter email"
               />
             </div>
 
@@ -88,9 +109,9 @@ const Register = () => {
                 className="form-control"
                 id="password"
                 name="password"
-                placeholder="Enter password"
                 value={userDetails.password}
                 onChange={handleChange}
+                placeholder="Enter password"
               />
             </div>
 
@@ -126,6 +147,19 @@ const Register = () => {
               </select>
             </div>
 
+            <div className="mb-3">
+              <label htmlFor="profileImage" className="form-label">
+                Profile Image
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="profileImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+
             <button type="submit" className="btn btn-success w-100">
               Register
             </button>
@@ -136,7 +170,7 @@ const Register = () => {
               Already a user? Login{" "}
               <button
                 onClick={() => navigate("/login")}
-                className="text-decoration-none"
+                className="btn btn-link p-0 m-0"
               >
                 here
               </button>

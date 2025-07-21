@@ -89,19 +89,23 @@ export default function CartPage() {
               .map((item) => (
                 <tr key={item.productId._id}>
                   <td>
-                    <img
-                      src={item.productId.imageUrl.replace(
-                        "localhost",
-                        "192.168.1.182"
-                      )}
-                      alt={item.productId.name}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "contain",
-                      }}
-                    />
+                    <Link to={`/product/${item.productId._id}`}>
+                      <img
+                        src={item.productId.imageUrl.replace(
+                          "localhost",
+                          "192.168.1.182"
+                        )}
+                        alt={item.productId.name}
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "contain",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Link>
                   </td>
+
                   <td>{item.productId.name}</td>
                   <td>{item.productId.price.toFixed(2)}</td>
                   <td className="d-flex gap-2 align-items-center">

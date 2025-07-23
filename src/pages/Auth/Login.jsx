@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance"; // ✅ centralized axios
+import { useCart } from "../../context/CartContext";
 
 const Login = ({ setLoggedInUser }) => {
   const navigate = useNavigate();
+  const { fetchCart } = useCart();
 
   const [credentials, setCredentials] = useState({
     email: "",
@@ -33,6 +35,7 @@ const Login = ({ setLoggedInUser }) => {
         const decodedUser = jwtDecode(data.token);
         localStorage.setItem("token", data.token);
         setLoggedInUser(decodedUser);
+        await fetchCart();
         toast.success("Login successful!");
         navigate("/");
       } else {

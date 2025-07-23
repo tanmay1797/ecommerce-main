@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import Footer from "../../components/Footer";
+// import Footer from "../../components/Footer";
 import ProductCard from "../../components/ProductCard";
 import "../../App.css";
 import Sidebar from "../../components/Sidebar";
@@ -205,7 +205,7 @@ export default function ProductsPage({
         </div>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

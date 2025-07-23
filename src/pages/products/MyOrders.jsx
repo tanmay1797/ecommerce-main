@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
 
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get("/order/get");
-      setOrders(response.data.orders || []);
+      setOrders(response.data.data || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
       toast.error("Failed to load orders");
@@ -23,8 +21,8 @@ const MyOrders = () => {
   }, []);
 
   const filteredOrders = orders.filter((order) =>
-    order.products.some((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    order.products?.some((product) =>
+      product?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 

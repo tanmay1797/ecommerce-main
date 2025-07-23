@@ -10,9 +10,10 @@ export default function Navbar({
 }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cartCount } = useCart(); // ✅ Get cart count from context
+  const { cartCount, clearCart } = useCart(); // ✅ Get cart count from context
 
   const handleLogout = () => {
+    clearCart();
     localStorage.removeItem("token");
     setLoggedInUser(null);
     navigate("/login");

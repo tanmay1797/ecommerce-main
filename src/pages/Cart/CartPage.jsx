@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import CheckoutModal from "../../components/CheckoutModal";
 
 export default function CartPage() {
-  const { cartProducts, setCartProducts, fetchCart, cartCount } = useCart();
-
-  const navigate = useNavigate();
+  const { cartProducts, setCartProducts, fetchCart, cartCount, clearCart } =
+    useCart();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchCart();
@@ -43,12 +44,12 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
-    navigate("/checkout");
+    setShowModal(true); // ✅ Show modal instead of navigating
   };
 
   if (!cartProducts || cartProducts.length === 0) {
     return (
-      <div className="container text-center mt-5">
+      <div className=" container-fluid text-center mt-5">
         <img
           src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
           alt="Empty Cart"
@@ -157,6 +158,12 @@ export default function CartPage() {
           Proceed to Checkout
         </button>
       </div>
+      <CheckoutModal
+        show={showModal}
+        cartItems={cartProducts}
+        handleClose={() => setShowModal(false)}
+        clearCart={clearCart}
+      />
     </div>
   );
 }

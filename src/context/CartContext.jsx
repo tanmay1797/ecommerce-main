@@ -21,6 +21,11 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // ✅ Only clears cart from frontend (React state)
+  const clearCart = () => {
+    setCartProducts([]);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -36,6 +41,7 @@ export const CartProvider = ({ children }) => {
         cartCount: cartProducts.reduce((acc, item) => acc + item.quantity, 0),
         fetchCart,
         loading,
+        clearCart, // ✅ Exposed for use in logout or order confirmation
       }}
     >
       {children}

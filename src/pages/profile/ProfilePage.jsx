@@ -131,42 +131,7 @@ const ProfilePage = ({ loggedInUser }) => {
           <li className="list-group-item">
             <strong>Gender:</strong> {gender || "Not specified"}
           </li>
-          <li className="list-group-item">
-            <strong>Address:</strong>
-            <div className="ms-2 mt-1">
-              {address?.street && (
-                <div>
-                  <strong>Street:</strong> {address.street}
-                </div>
-              )}
-              {address?.city && (
-                <div>
-                  <strong>City:</strong> {address.city}
-                </div>
-              )}
-              {address?.state && (
-                <div>
-                  <strong>State:</strong> {address.state}
-                </div>
-              )}
-              {address?.postalCode && (
-                <div>
-                  <strong>Postal Code:</strong> {address.postalCode}
-                </div>
-              )}
-              {address?.country && (
-                <div>
-                  <strong>Country:</strong> {address.country}
-                </div>
-              )}
 
-              {!address?.street &&
-                !address?.city &&
-                !address?.state &&
-                !address?.postalCode &&
-                !address?.country && <div>Not provided</div>}
-            </div>
-          </li>
           <li className="list-group-item d-flex justify-content-between">
             <span>
               <strong>Reset my password:</strong> **********

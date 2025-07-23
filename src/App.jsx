@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
-import LoginPromptModal from "./components/LoginPromptModal"; // ✅ Import modal
+import LoginPromptModal from "./components/LoginPromptModal";
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -13,11 +13,11 @@ import ProductsPage from "./pages/products/ProductsPage";
 import CartPage from "./pages/Cart/CartPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ProductDetail from "./pages/products/ProductDetail";
+import Footer from "./components/Footer";
 
-// toast
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Checkout from "./pages/Cart/Checkout";
+// import Checkout from "./pages/Cart/Checkout";
 import MyOrders from "./pages/products/MyOrders";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 
@@ -48,89 +48,87 @@ function App() {
   }
 
   return (
-    <Router>
-      <Navbar
-        loggedInUser={loggedInUser}
-        setLoggedInUser={setLoggedInUser}
-        setSearchTerm={setSearchTerm}
-        showLoginModal={showLoginModal}
-        cartProducts={cartProducts}
-      />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProductsPage
-              products={products}
-              setProducts={setProducts}
-              searchTerm={searchTerm}
-              loggedInUser={loggedInUser}
-              setLoggedInUser={setLoggedInUser}
-              setShowLoginModal={setShowLoginModal}
-            />
-          }
-        />
-        <Route
-          path="/login"
-          element={<Login setLoggedInUser={setLoggedInUser} />}
-        />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/profile"
-          element={
-            <ProfilePage
-              loggedInUser={loggedInUser}
-              setLoggedInUser={setLoggedInUser}
-            />
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <PrivateRoute loggedInUser={loggedInUser}>
-              <CartPage
-                loggedInUser={loggedInUser}
-                setLoggedInUser={setLoggedInUser}
-                cartProducts={cartProducts}
-                setCartProducts={setCartProducts}
-              />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/checkout"
-          element={
-            <PrivateRoute loggedInUser={loggedInUser}>
-              <Checkout />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/my-orders"
-          element={
-            <PrivateRoute loggedInUser={loggedInUser}>
-              <MyOrders />
-            </PrivateRoute>
-          }
+    <div className="app-container d-flex flex-column min-vh-100">
+      <Router>
+        <Navbar
+          loggedInUser={loggedInUser}
+          setLoggedInUser={setLoggedInUser}
+          setSearchTerm={setSearchTerm}
+          showLoginModal={showLoginModal}
+          cartProducts={cartProducts}
         />
 
-        <Route
-          path="/product/:productId"
-          element={<ProductDetail loggedInUser={loggedInUser} />}
-        />
-      </Routes>
-      {/* ✅ RENDER THE MODAL HERE */}
-      <LoginPromptModal
-        show={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={(user) => {
-          setLoggedInUser(user);
-          setShowLoginModal(false);
-        }}
-      />
-      <ToastContainer position="bottom-right" autoClose={3000} />
-    </Router>
+        <div className="flex-grow-1">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProductsPage
+                  products={products}
+                  setProducts={setProducts}
+                  searchTerm={searchTerm}
+                  loggedInUser={loggedInUser}
+                  setLoggedInUser={setLoggedInUser}
+                  setShowLoginModal={setShowLoginModal}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={<Login setLoggedInUser={setLoggedInUser} />}
+            />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/profile"
+              element={
+                <ProfilePage
+                  loggedInUser={loggedInUser}
+                  setLoggedInUser={setLoggedInUser}
+                />
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <PrivateRoute loggedInUser={loggedInUser}>
+                  <CartPage
+                    loggedInUser={loggedInUser}
+                    setLoggedInUser={setLoggedInUser}
+                    cartProducts={cartProducts}
+                    setCartProducts={setCartProducts}
+                  />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <PrivateRoute loggedInUser={loggedInUser}>
+                  <MyOrders />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/product/:productId"
+              element={<ProductDetail loggedInUser={loggedInUser} />}
+            />
+          </Routes>
+
+          <LoginPromptModal
+            show={showLoginModal}
+            onClose={() => setShowLoginModal(false)}
+            onLoginSuccess={(user) => {
+              setLoggedInUser(user);
+              setShowLoginModal(false);
+            }}
+          />
+          <ToastContainer position="bottom-right" autoClose={3000} />
+        </div>
+
+        <Footer />
+      </Router>
+    </div>
   );
 }
 

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import AddressModal from "../../components/AddressModal";
+import { useAddress } from "../../context/AddressContext";
 
 const ProfilePage = ({ loggedInUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -9,6 +11,9 @@ const ProfilePage = ({ loggedInUser }) => {
   const [receivedOtp, setReceivedOtp] = useState("");
   const [fieldsEnabled, setFieldsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+
+  const { defaultAddress } = useAddress();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
@@ -125,6 +130,34 @@ const ProfilePage = ({ loggedInUser }) => {
             <strong>Phone:</strong> {phone || "Not provided"}
           </li>
           <li className="list-group-item">
+            <strong>Default Address: </strong>
+            {defaultAddress ? (
+              <>
+                {defaultAddress.street}, {defaultAddress.city},{" "}
+                {defaultAddress.state} {defaultAddress.postalCode},{" "}
+                {defaultAddress.country}
+              </>
+            ) : (
+              "No default address set"
+            )}
+          </li>
+          <li className="list-group-item">
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <strong>All addresses:</strong>
+                <br />
+              </div>
+              <span
+                className="text-primary"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowAddressModal(true)}
+              >
+                <i className="fa-solid fa-eye"></i>
+              </span>
+            </div>
+          </li>
+
+          <li className="list-group-item">
             <strong>Date of Birth:</strong>{" "}
             {dob ? new Date(dob).toLocaleDateString("en-GB") : "Not provided"}
           </li>
@@ -226,6 +259,12 @@ const ProfilePage = ({ loggedInUser }) => {
             </div>
           </div>
         </div>
+      )}
+      {showAddressModal && (
+        <AddressModal
+          show={showAddressModal}
+          handleClose={() => setShowAddressModal(false)}
+        />
       )}
     </div>
   );

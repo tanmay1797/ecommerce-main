@@ -5,11 +5,14 @@ import App from "./App.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { CartProvider } from "./context/CartContext.jsx";
+import { AddressProvider } from "./context/AddressContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <CartProvider>
-      <App />
+      <AddressProvider>
+        <App />
+      </AddressProvider>
     </CartProvider>
   </StrictMode>
 );

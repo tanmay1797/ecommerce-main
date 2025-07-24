@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-// import Footer from "../../components/Footer";
+import Footer from "../../components/Footer";
 import ProductCard from "../../components/ProductCard";
 import "../../App.css";
 import Sidebar from "../../components/Sidebar";
@@ -23,6 +23,8 @@ export default function ProductsPage({
   const [sortOption, setSortOption] = useState("default");
 
   const PRODUCTS_PER_PAGE = 8;
+
+  console.log(selectedCategory);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -68,18 +70,21 @@ export default function ProductsPage({
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const selectedCategoryObj = categories.find(
-      (cat) => cat.name === selectedCategory
-    );
-    const selectedCategoryId = selectedCategoryObj?._id;
+    // Match category
+    if (selectedCategory === "All") return matchesSearch;
+
+    // Normalize category name comparison
+    const productCategoryName =
+      product.category?.name ||
+      categories.find((c) => c._id === product.category)?.name;
 
     const matchesCategory =
-      selectedCategory === "All" ||
-      product.category === selectedCategoryId ||
-      product.category?._id === selectedCategoryId;
+      productCategoryName?.toLowerCase() === selectedCategory.toLowerCase();
 
     return matchesSearch && matchesCategory;
   });
+
+  console.log(filteredProducts);
 
   // ✅ Sort filtered products based on selected option
   const sortedProducts = [...filteredProducts];
@@ -105,7 +110,10 @@ export default function ProductsPage({
   return (
     <div className="app-container d-flex flex-column min-vh-100">
       <div className="container-fluid py-5 flex-grow-1">
-        <Carousel />
+        <div className="d-none d-md-block">
+          <Carousel />
+        </div>
+
         <div className="row">
           {/* Sidebar - Category Filter */}
           <Sidebar
@@ -145,7 +153,6 @@ export default function ProductsPage({
                     loggedInUser={loggedInUser}
                     setLoggedInUser={setLoggedInUser}
                     setShowLoginModal={setShowLoginModal}
-                    categories={categories}
                   />
                 ))}
               </div>

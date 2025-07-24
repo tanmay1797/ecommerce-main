@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAddress } from "../context/AddressContext";
 
 const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
-  const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("UPI");
+  const { addresses, fetchAddresses, defaultAddress } = useAddress();
 
   const [newAddress, setNewAddress] = useState({
     address: "",
@@ -25,20 +26,10 @@ const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
   );
 
   useEffect(() => {
-    if (!show) return;
-
-    const fetchAddresses = async () => {
-      try {
-        const res = await axiosInstance.get("/user/getAddress");
-        const addressList = res.data?.addressList || [];
-        setAddresses(addressList);
-      } catch (error) {
-        console.error("Error fetching addresses:", error);
-      }
-    };
-
-    fetchAddresses();
-  }, [show]);
+    if (show && step === 1 && defaultAddress) {
+      setSelectedAddress(defaultAddress);
+    }
+  }, [show, step, defaultAddress]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,9 +56,7 @@ const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
       };
 
       await axiosInstance.post("/user/createAddress", payload);
-      const res = await axiosInstance.get("/user/getAddress");
-      const addressList = res.data?.addressList || [];
-      setAddresses(addressList);
+      await fetchAddresses();
 
       toast.success("Address added successfully!");
 

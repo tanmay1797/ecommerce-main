@@ -190,8 +190,9 @@ const ProfilePage = ({ loggedInUser }) => {
           role="dialog"
           aria-modal="true"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          onClick={() => setShowModal(false)}
         >
-          <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-dialog modal-dialog-centered" role="document" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content shadow">
               <div className="modal-header">
                 <h5 className="modal-title">Update Password</h5>
@@ -264,6 +265,7 @@ const ProfilePage = ({ loggedInUser }) => {
         <AddressModal
           show={showAddressModal}
           handleClose={() => setShowAddressModal(false)}
+          
         />
       )}
     </div>

@@ -49,13 +49,14 @@ export default function CartPage() {
 
   if (!cartProducts || cartProducts.length === 0) {
     return (
+      // <div className="d-flex justify-content-center align-items-center">
       <div className=" container-fluid text-center mt-5">
         <img
           src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
           alt="Empty Cart"
           width="100"
           height="100"
-          className="mb-4"
+          className="mb-4 mt-5"
         />
         <h3 className="mb-2">Your cart is empty</h3>
         <p className="text-muted mb-3">
@@ -65,11 +66,12 @@ export default function CartPage() {
           Browse Products
         </Link>
       </div>
+      // </div>
     );
   }
 
   return (
-    <div className="container py-5">
+    <div className="container py-5 ">
       <h2 className="mb-4">Your Shopping Cart</h2>
 
       <div className="table-responsive">

@@ -296,6 +296,7 @@ const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
             )}
 
             {/* Step 3: Product Summary */}
+
             {step === 3 && (
               <>
                 {/* Order Summary */}
@@ -325,7 +326,7 @@ const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
                 </div>
 
                 {/* Payment Method */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <h5>Payment Method</h5>
                   <div className="form-check">
                     <input
@@ -386,7 +387,85 @@ const CheckoutModal = ({ show, cartItems, handleClose, clearCart }) => {
                       Net Banking
                     </label>
                   </div>
-                </div>
+                </div> */}
+
+                {/* Step 3: Product Summary */}
+                {step === 3 && (
+                  <>
+                    {/* 🛒 Order Summary */}
+                    <div className="mt-4">
+                      <h5 className="mb-3">🛒 Items in Cart</h5>
+                      <div className="card p-3">
+                        {cartItems.map((item, index) => (
+                          <div
+                            key={index}
+                            className="d-flex justify-content-between align-items-center border-bottom py-2"
+                          >
+                            <div>
+                              <strong>{item.productId.name}</strong> ×{" "}
+                              {item.quantity}
+                            </div>
+                            <div className="text-success fw-semibold">
+                              ₹{item.totalPrice}
+                            </div>
+                          </div>
+                        ))}
+                        <div className="d-flex justify-content-between pt-3">
+                          <h5 className="mb-0">Total Price:</h5>
+                          <h5 className="text-primary mb-0">
+                            ₹{grandTotalPrice}
+                          </h5>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🏠 Delivery Address */}
+                    <div className="mt-4">
+                      <h5 className="mb-3">📍 Delivery Address</h5>
+                      <div className="card p-3">
+                        <p className="mb-0">
+                          {selectedAddress?.fullAddress || (
+                            <span className="text-muted">
+                              No address selected
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 💳 Payment Method */}
+                    <div className="mt-4">
+                      <h5 className="mb-3">💳 Payment Method</h5>
+                      <div className="card p-3">
+                        {["UPI", "CARD", "COD", "NETBANKING"].map((method) => (
+                          <div className="form-check mb-2" key={method}>
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="paymentMethod"
+                              value={method}
+                              checked={paymentMethod === method}
+                              onChange={(e) => setPaymentMethod(e.target.value)}
+                              id={`payment-${method.toLowerCase()}`}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`payment-${method.toLowerCase()}`}
+                            >
+                              {method === "COD"
+                                ? "Cash on Delivery"
+                                : method === "CARD"
+                                ? "Credit/Debit Card"
+                                : method === "NETBANKING"
+                                ? "Net Banking"
+                                : "UPI"}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Footer Buttons */}
                 <div className="mt-4 d-flex justify-content-between">

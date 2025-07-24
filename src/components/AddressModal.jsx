@@ -14,6 +14,16 @@ const AddressModal = ({ show, handleClose }) => {
     country: "",
   });
 
+  const [newAddressForm, setNewAddressForm] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
+  });
+
+  const [isAdding, setIsAdding] = useState(false);
+
   const startEditing = (address) => {
     setEditingId(address.addressId);
     setFormData({
@@ -71,14 +81,40 @@ const AddressModal = ({ show, handleClose }) => {
     }
   };
 
+  const handleNewAddressSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        addresses: [newAddressForm],
+      };
+      await axiosInstance.post("/user/createAddress", payload);
+      toast.success("New address added");
+      setNewAddressForm({
+        street: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "India",
+      });
+      setIsAdding(false);
+      fetchAddresses();
+    } catch (err) {
+      toast.error("Failed to add address");
+    }
+  };
+
   if (!show) return null;
 
   return (
     <div
       className="modal fade show d-block"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      onClick={handleClose}
     >
-      <div className="modal-dialog modal-dialog-scrollable">
+      <div
+        className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Manage Addresses</h5>
@@ -89,7 +125,10 @@ const AddressModal = ({ show, handleClose }) => {
             ></button>
           </div>
 
-          <div className="modal-body">
+          <div
+            className="modal-body"
+            style={{ maxHeight: "60vh", overflowY: "auto" }}
+          >
             {addresses.length === 0 ? (
               <p>No addresses found.</p>
             ) : (
@@ -102,60 +141,26 @@ const AddressModal = ({ show, handleClose }) => {
                 >
                   {editingId === addr.addressId ? (
                     <form onSubmit={handleEditSubmit}>
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="Street"
-                        value={formData.street}
-                        onChange={(e) =>
-                          setFormData({ ...formData, street: e.target.value })
-                        }
-                        required
-                      />
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="City"
-                        value={formData.city}
-                        onChange={(e) =>
-                          setFormData({ ...formData, city: e.target.value })
-                        }
-                        required
-                      />
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="State"
-                        value={formData.state}
-                        onChange={(e) =>
-                          setFormData({ ...formData, state: e.target.value })
-                        }
-                        required
-                      />
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="Postal Code"
-                        value={formData.postalCode}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            postalCode: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="Country"
-                        value={formData.country}
-                        onChange={(e) =>
-                          setFormData({ ...formData, country: e.target.value })
-                        }
-                        required
-                      />
-
+                      {["street", "city", "state", "postalCode", "country"].map(
+                        (field) => (
+                          <input
+                            key={field}
+                            type="text"
+                            className="form-control mb-2"
+                            placeholder={
+                              field.charAt(0).toUpperCase() + field.slice(1)
+                            }
+                            value={formData[field]}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                [field]: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        )
+                      )}
                       <div className="d-flex gap-2">
                         <button
                           type="submit"
@@ -205,6 +210,65 @@ const AddressModal = ({ show, handleClose }) => {
                   )}
                 </div>
               ))
+            )}
+
+            <div className="text-center mb-3">
+              <strong>Or</strong>
+            </div>
+
+            <div className="d-flex justify-content-center align-items-center">
+              <button
+                className="btn btn-success"
+                onClick={() => setIsAdding(!isAdding)}
+                disabled={addresses.length >= 10}
+              >
+                Add New Address
+              </button>
+            </div>
+
+            {addresses.length >= 10 && (
+              <div className="text-danger text-center mt-2">
+                You’ve reached the maximum of 10 saved addresses.
+              </div>
+            )}
+
+            {isAdding && (
+              <form className="mt-4" onSubmit={handleNewAddressSubmit}>
+                {["street", "city", "state", "postalCode", "country"].map(
+                  (field) => (
+                    <div className="mb-2" key={field}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder={
+                          field.charAt(0).toUpperCase() + field.slice(1)
+                        }
+                        value={newAddressForm[field]}
+                        onChange={(e) =>
+                          setNewAddressForm({
+                            ...newAddressForm,
+                            [field]: e.target.value,
+                          })
+                        }
+                        name={field}
+                        required
+                      />
+                    </div>
+                  )
+                )}
+                <div className="d-flex justify-content-between mt-3">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setIsAdding(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Save Address
+                  </button>
+                </div>
+              </form>
             )}
           </div>
         </div>

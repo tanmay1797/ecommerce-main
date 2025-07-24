@@ -21,8 +21,8 @@ export const AddressProvider = ({ children }) => {
       const defaultAddr = allAddresses.find((addr) => addr.isDefault);
       setDefaultAddress(defaultAddr || null);
     } catch (error) {
-      console.error("Error fetching addresses:", error);
-      toast.error("Failed to fetch addresses.");
+      // console.error("Error fetching addresses:", error);
+      // toast.error("Failed to fetch addresses.");
     } finally {
       setLoading(false);
     }

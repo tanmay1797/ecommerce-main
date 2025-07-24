@@ -50,13 +50,15 @@ function App() {
   return (
     <div className="app-container d-flex flex-column min-vh-100">
       <Router>
-        <Navbar
-          loggedInUser={loggedInUser}
-          setLoggedInUser={setLoggedInUser}
-          setSearchTerm={setSearchTerm}
-          showLoginModal={showLoginModal}
-          cartProducts={cartProducts}
-        />
+        {
+          <Navbar
+            loggedInUser={loggedInUser}
+            setLoggedInUser={setLoggedInUser}
+            setSearchTerm={setSearchTerm}
+            showLoginModal={showLoginModal}
+            cartProducts={cartProducts}
+          />
+        }
 
         <div className="flex-grow-1">
           <Routes>
